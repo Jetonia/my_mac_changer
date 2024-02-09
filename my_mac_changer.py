@@ -1,5 +1,6 @@
 import subprocess
 import optparse
+import re
 
 def get_user_input():
     parse_object = optparse.OptionParser()
@@ -16,9 +17,20 @@ def change_mac_adress(user_interface, user_mac_adress):
 def control_new_mac(interface):
 
     ifconfig = subprocess.check_output(["ifconfig",interface])
-    print(ifconfig)
+    new_mac = re.search(r"\w\w:\w\w:\w\w:\w\w:\w\w:\w\w",ifconfig.decode("utf-8"))
+    ifconfig.decode("utf-8")
+    print(new_mac)
+    if new_mac:
+        return new_mac.group(0)
+    else:
+        return None
 
 print("MyMacCHanger started!")
 (user_input,arguments) = get_user_input()
 change_mac_adress(user_input.interface,user_input.mac_adress)
-control_new_mac(user_input.interface)
+finalized_mac = control_new_mac(user_input.interface)
+
+if finalized_mac == user_input.mac_adress:
+    print("Success!")
+else:
+    print("Error!")
